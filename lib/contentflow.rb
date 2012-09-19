@@ -1,5 +1,6 @@
+require "rails"
 require "contentflow/version"
 
 module Contentflow
-  # Your code goes here...
+  require "contentflow/engine"
 end
