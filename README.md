@@ -23,23 +23,23 @@ Usage
 
 ### Stylesheets
 
-	Add necessary stylesheet file to app/assets/stylesheets/application.css:
+Add necessary stylesheet file to app/assets/stylesheets/application.css:
 
-	``` css
-	*= require contentflow
-	```
+``` css
+*= require contentflow
+```
 
 ### Javascript
 	
-	Add necessary javascript file to app/assets/javascripts/application.js
+Add necessary javascript file to app/assets/javascripts/application.js
 
-	``` javascript
-	//= require contentflow
-	```
+``` javascript
+//= require contentflow
+```
 
 ### Configuration
 
-	For configuration details please visit [Contentflow official site](http://jacksasylum.eu/ContentFlow/).
+For configuration details please visit [Contentflow official site](http://jacksasylum.eu/ContentFlow/).
 
 Contributing
 ------------
