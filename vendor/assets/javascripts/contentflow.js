@@ -103,32 +103,9 @@ var ContentFlowGlobal = {
             this.scriptElement = this.getScriptElement(this.scriptName);
         }
 
-        this.BaseDir = this.getScriptPath(this.scriptElement, this.scriptName) ;
-        if (!this.AddOnBaseDir) this.AddOnBaseDir = this.BaseDir;
-        if (!this.CSSBaseDir) this.CSSBaseDir = this.BaseDir;
     },
 
     init: function () {
-        /* add default stylesheets */
-        // this.addStylesheet(this.CSSBaseDir+'contentflow.css');
-        // this.addStylesheet(this.CSSBaseDir+'mycontentflow.css');    
-                                                                    // FF2: without adding a css-file FF2 hangs on a reload.
-                                                                    //      I don't have the slidest idea why
-                                                                    //      Could be timing problem
-        this.loadAddOns = new Array();
-        /* add AddOns scripts */
-        if (this.scriptElement.getAttribute('load')) {
-            var AddOns = this.loadAddOns = this.scriptElement.getAttribute('load').replace(/\ +/g,' ').split(' ');
-            for (var i=0; i<AddOns.length; i++) {
-                if (AddOns[i] == '') continue;
-                //if (AddOns[i] == 'myStyle') {
-                    //this.addStylesheet(this.BaseDir+'mycontentflow.css');
-                    //continue;
-                //}
-                this.addScript(this.AddOnBaseDir+'ContentFlowAddOn_'+AddOns[i]+'.js');
-            }
-        }
-
         /* ========== ContentFlow auto initialization on document load ==========
          * thanks to Dean Edwards
          * http://dean.edwards.name/weblog/2005/02/order-of-events/
@@ -170,14 +147,6 @@ var ContentFlowGlobal = {
     onloadInit: function () {
         // quit if this function has already been called
         if (arguments.callee.done) return;
-        for (var i=0; i< ContentFlowGlobal.loadAddOns.length; i++) {
-            var a = ContentFlowGlobal.loadAddOns[i];
-            if (!ContentFlowGlobal.AddOns[a]) {
-                var CFG = ContentFlowGlobal;
-                window.setTimeout( CFG.onloadInit, 10);
-                return;
-            }
-        }
         // flag this function so we don't do the same thing twice
         arguments.callee.done = true;
         
@@ -213,62 +182,6 @@ var ContentFlowGlobal = {
 };
 
 ContentFlowGlobal.initPath();
-
-
-/*
- * ============================================================
- * ContentFlowAddOn
- * ============================================================
- */
-var ContentFlowAddOn = function (name, methods, register) {
-    if (typeof register == "undefined" || register != false)
-        ContentFlowGlobal.AddOns[name] = this;
-        
-    this.name = name;
-    if (!methods) methods = {};
-    this.methods = methods;
-    this.conf = {};
-    if (this.methods.conf) {
-       this.setConfig(this.methods.conf);
-       delete this.methods.conf;
-    }
-
-
-    this.scriptpath = ContentFlowGlobal.AddOnBaseDir;
-    if (methods.init) {
-        var init = methods.init.bind(this);
-        init(this);
-    }
-};
-
-ContentFlowAddOn.prototype = {
-    Browser: ContentFlowGlobal.Browser,
-
-    addScript: ContentFlowGlobal.addScript,
-    addScripts: ContentFlowGlobal.addScripts,
-
-    addStylesheet: function (path) {
-        if (!path)
-            path = this.scriptpath+'ContentFlowAddOn_'+this.name+'.css';
-        ContentFlowGlobal.addStylesheet(path);
-    },
-    addStylesheets: ContentFlowGlobal.addStylesheets,
-
-    setConfig: function (conf) {
-        for (var c in conf) {
-            this.conf[c] = conf[c];
-        }
-    },
-
-    _init: function (flow) {
-        if (this.methods.ContentFlowConf) {
-            flow.setConfig(this.methods.ContentFlowConf);
-        }
-    }
-
-
-};
-
 
 
 /* 
@@ -1329,7 +1242,6 @@ ContentFlow.prototype = {
 
         /* ----------  init configuration */ 
         this.setConfig(this._defaultConf);
-        this._initAddOns(); /* init AddOns */
         this.setConfig(this._userConf);
         
         this._initSizes(); // ......
@@ -1404,66 +1316,12 @@ ContentFlow.prototype = {
                     if (cf.Scrollbar) cf.Scrollbar.style.visibility = "visible";
 
                     cf.resize();
-                    for (var i=0; i < cf._loadedAddOns.length; i++) {
-                        var a = ContentFlowGlobal.AddOns[cf._loadedAddOns[i]];
-                        if (a.methods.afterContentFlowInit)
-                            a.methods.afterContentFlowInit(cf);
-                    }
                     cf.conf.onInit();
                 }
             }, 10
         );
         
         this.isInit = true;
-
-    },
-    
-    /* ---------- init AddOns ---------- */ 
-    _initAddOns: function () {
-
-        // get an array of names of all AddOns that should be used
-        var loadAddOns = [];
-        if (this._userConf.useAddOns) {
-            if (typeof this._userConf.useAddOns == "string") {
-                loadAddOns = this._userConf.useAddOns.split(" ");
-            }
-            else if (typeof this._userConf.useAddOns == "array") {
-                loadAddOns = this._userConf.useAddOns;
-            }
-        }
-        else if (this.Container.getAttribute("useAddOns")) {
-            loadAddOns = this.Container.getAttribute("useAddOns").split(" ");
-        }
-        else {
-            loadAddOns = this.conf.useAddOns.split(' ');
-        }
-
-
-        // check the names for keywords
-        for (var i=0; i<loadAddOns.length; i++) {
-            if (loadAddOns[i] == "none") {
-                loadAddOns = new Array();
-                break;
-            }
-            else if (loadAddOns[i] == "all") {
-                loadAddOns = new Array();
-                for (var AddOn in ContentFlowGlobal.AddOns)
-                    loadAddOns.push(AddOn);
-                break;
-            }
-        }
-
-        // init all AddOns that should be used and exist
-        for (var i=0; i<loadAddOns.length; i++) {
-            var AddOn = ContentFlowGlobal.AddOns[loadAddOns[i]];
-            if (AddOn) {
-                this._loadedAddOns.push(loadAddOns[i]);
-                AddOn._init(this);
-                this.Container.addClassName('ContentFlowAddOn_'+AddOn.name);
-                if (AddOn.methods.onloadInit)
-                    AddOn.methods.onloadInit(this);
-            }
-        }
 
     },
 
