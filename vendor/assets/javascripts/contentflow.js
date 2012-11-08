@@ -1998,7 +1998,7 @@ ContentFlow.prototype = {
 
         var diff = this._targetPosition - this._currentPosition; 
         var absDiff = Math.abs(diff);
-        if ( absDiff > 0.01) { // till activeItem is nearly at position 0
+        if ( absDiff > 0.1) { // till activeItem is nearly at position 0
 
             this._currentPosition += this.conf.flowSpeedFactor * this.conf.calcStepWidth(diff, absDiff, this.items.length, this.conf.visibleItems);
 
