@@ -69,7 +69,7 @@
         margin: 0px auto;
         margin-top: 10px;
         height: 16px;
-        background: image_url('contentflow/scrollbar_white.png') left center repeat-x;
+        background: image_url('contentflow/scrollbar_grey.png') left center repeat-x;
         position: relative;
         overflow: visible;
     }
@@ -77,14 +77,14 @@
         .ContentFlow .scrollbar .slider {
             width: 16px;
             height: 16px;
-            background: image_url('contentflow/slider_white.png') center center no-repeat;
+            background: image_url('contentflow/slider_grey.png') center center no-repeat;
             cursor: move;
         }
         
         /* only for IE <= 6 and a alphatransparent slider image */
         * html .ContentFlow .scrollbar .slider { background-image: none; }
         * html .ContentFlow .scrollbar .slider .virtualSlider {
-            filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=crop, src='contentflow/slider_white.png');
+            filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=crop, src='contentflow/slider_grey.png');
         }
             .ContentFlow .scrollbar .slider .position {
                 top: 120%;
