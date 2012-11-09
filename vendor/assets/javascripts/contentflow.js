@@ -103,9 +103,13 @@ var ContentFlowGlobal = {
             this.scriptElement = this.getScriptElement(this.scriptName);
         }
 
-        this.BaseDir = this.getScriptPath(this.scriptElement, this.scriptName) ;
-        if (!this.AddOnBaseDir) this.AddOnBaseDir = this.BaseDir;
-        if (!this.CSSBaseDir) this.CSSBaseDir = this.BaseDir;
+		//Dante changed this to make it work for precomplied assets
+        //this.BaseDir = this.getScriptPath(this.scriptElement, this.scriptName) ;
+        //if (!this.AddOnBaseDir) this.AddOnBaseDir = this.BaseDir;
+        //if (!this.CSSBaseDir) this.CSSBaseDir = this.BaseDir;
+        
+        this.AddOnBaseDir 	= window.location.origin + "/assets/"
+        this.CSSBaseDir 	= window.location.origin + "/assets/"
     },
 
     init: function () {
@@ -117,7 +121,7 @@ var ContentFlowGlobal = {
                                                                     //      Could be timing problem
         this.loadAddOns = new Array();
         /* add AddOns scripts */
-        if (this.scriptElement.getAttribute('load')) {
+        if (this.scriptElement != null && this.scriptElement != '' && this.scriptElement.getAttribute('load')) {
             var AddOns = this.loadAddOns = this.scriptElement.getAttribute('load').replace(/\ +/g,' ').split(' ');
             for (var i=0; i<AddOns.length; i++) {
                 if (AddOns[i] == '') continue;
